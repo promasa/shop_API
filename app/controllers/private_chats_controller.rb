@@ -13,6 +13,10 @@ class PrivateChatsController < ApplicationController
     render json: serializer.as_json
   end
 
+  def index
+
+  end
+
   def show
     my_room_id = create_room_id(current_user.id , params[:id])
     texts = PrivateChat.where(room_id: my_room_id)
@@ -37,10 +41,15 @@ class PrivateChatsController < ApplicationController
     end
   end
 
-  def get_user_id(room_id)
-    room_user_id = room_id.split('-')
-    @first_id = room_user_id[0].to_i
-    @second_id = room_user_id[1].to_i
-  end
+  # def get_user_id(room_id)
+  #   room_user_id = room_id.split('-')
+  #   @first_id = room_user_id[0].to_i
+  #   @second_id = room_user_id[1].to_i
+  # end
+
+  # def my_room
+  #   my_room = PrivateChat.where('from_id = ? or to_id = ?',current_user.id,current_user.id)
+  #   @my_room_list = my_room.room_id.distinct
+  # end
 
 end

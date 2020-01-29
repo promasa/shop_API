@@ -13,18 +13,18 @@ class UsersController < ApplicationController
   end
 
   def show
-    serializer = UserSerializer.new(user)
+    serializer = UserSerializer.new(@user)
     render json: serializer.as_json
   end
 
   def update
-    user.update!(user_params)
-    serializer = UserSerializer.new(user)
+    @user.update!(user_params)
+    serializer = UserSerializer.new(@user)
     render json: serializer.as_json
   end
 
   def destroy
-    user.destroy!
+    @user.destroy!
     render json: {'message': '正常にUser削除されました'}
   end
 
@@ -38,6 +38,7 @@ class UsersController < ApplicationController
   def set_user
     @user = User.find(params[:id])
   end
+  
   def check_auth_update
     if @user.user_id != current_user.id 
         raise ActionController::BadRequest and return

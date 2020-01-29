@@ -14,6 +14,13 @@ Rails.application.routes.draw do
   get "items/:item_id/chats/:id", to:"item_chats#show"
   put "items/:item_id/chats/:id", to:"item_chats#update"
 
+  post "items/:id/favorite", to: "favorites#create"
+  delete "items/:id/favorite", to: "favorites#destroy"
+  get "favorite", to: "favorites#index"
+
+  post "items/:item_id/private_chats", to: "private_item_chats#create"
+  get "items/:item_id/private_chats", to: "private_item_chats#index"
+
   post "users/private_chats", to: "private_chats#create"
   get "users/private_chats/:id", to: "private_chats#show"
 end

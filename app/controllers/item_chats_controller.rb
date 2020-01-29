@@ -1,5 +1,8 @@
 class ItemChatsController < ApplicationController
   before_action :authorize!
+  before_action :set_text, only:[:show, :update, :destroy]
+  before_action :check_auth_update, only:[:update, :destroy]
+
   def create
     text = ItemChat.new(item_chat_params)
     text.item_id = params[:item_id]
@@ -10,21 +13,18 @@ class ItemChatsController < ApplicationController
   end
 
   def update
-    text = ItemChat.find(params[:id])
-    text.update!(item_chat_params)
-    serializer = ItemChatSerializer.new(text)
+    @text.update!(item_chat_params)
+    serializer = ItemChatSerializer.new(@text)
     render json: serializer.as_json
   end
 
   def destroy
-    text = ItemChat.find(params[:id])
-    text.destroy!
+    @text.destroy!
     render json: {'message': '正常にUser削除されました'}
   end
 
   def show
-    text = ItemChat.find(params[:id])
-    serializer = ItemChatSerializer.new(text)
+    serializer = ItemChatSerializer.new(@text)
     render json: serializer.as_json
   end
 
@@ -41,5 +41,14 @@ class ItemChatsController < ApplicationController
     )
   end
 
+  def set_text
+      @text = ItemChat.find(params[:id])
+  end
+
+  def check_auth_update
+    if @text.user_id != current_user.id 
+        raise ActionController::BadRequest and return
+    end
+  end
 
 end

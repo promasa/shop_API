@@ -1,5 +1,7 @@
 class ItemsController < ApplicationController
   before_action :authorize!
+  before_action :set_item, only:[:update, :destroy, :show]
+  before_action :check_auth_update, only:[:destroy, :update]
   def index
     query = Item.all
     query = query.page(params[:page]).per(params[:limit]).order(updated_at: :desc)
@@ -19,21 +21,18 @@ class ItemsController < ApplicationController
   end
 
   def update
-    item = Item.find(params[:id])
-    item.update!(item_params)
-    serializer = ItemSerializer.new(item)
+    @item.update!(item_params)
+    serializer = ItemSerializer.new(@item)
     render json: serializer.as_json
   end
 
   def destroy
-    item = Item.find(params[:id])
-    item.destroy!
+    @item.destroy!
     render json: {'message': '正常にUser削除されました'}
   end
 
   def show
-    item = Item.find(params[:id])
-    serializer = ItemSerializer.new(item)
+    serializer = ItemSerializer.new(@item)
     render json: serializer.as_json
   end
 
@@ -43,5 +42,15 @@ class ItemsController < ApplicationController
       :description,
       :price
     )
+  end
+
+  def set_item
+    @item = Item.find(params[:id])
+  end
+
+  def check_auth_update
+    if @item.user_id != current_user.id 
+        raise ActionController::BadRequest and return
+    end
   end
 end
