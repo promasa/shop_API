@@ -5,6 +5,11 @@ Rails.application.routes.draw do
   resources :items, only: [:create, :update, :destroy, :index, :show]
   resources :purchases, only:[:create, :destroy]
 
+  post "users/:id/follow", to: "relationships#create"
+  get "my_followings", to: "relationships#followings"
+  get "my_followers", to: "relationships#followers"
+  delete "user/:id/follow", to: "relationships#destroy"
+
   get "my_item", to: "my_pages#my_item"
   get "bought", to: "my_pages#bought"
 

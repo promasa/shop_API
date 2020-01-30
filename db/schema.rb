@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_28_104713) do
+ActiveRecord::Schema.define(version: 2020_01_29_095730) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,16 +43,6 @@ ActiveRecord::Schema.define(version: 2020_01_28_104713) do
     t.boolean "status", default: false
   end
 
-  create_table "private_chats", force: :cascade do |t|
-    t.string "text"
-    t.integer "from_id"
-    t.integer "to_id"
-    t.string "room_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["room_id", "created_at"], name: "index_private_chats_on_room_id_and_created_at"
-  end
-
   create_table "private_item_chats", force: :cascade do |t|
     t.integer "item_id"
     t.integer "user_id"
@@ -68,6 +58,16 @@ ActiveRecord::Schema.define(version: 2020_01_28_104713) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "relationships", force: :cascade do |t|
+    t.bigint "follower_id"
+    t.bigint "followed_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["followed_id"], name: "index_relationships_on_followed_id"
+    t.index ["follower_id", "followed_id"], name: "index_relationships_on_follower_id_and_followed_id", unique: true
+    t.index ["follower_id"], name: "index_relationships_on_follower_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -80,4 +80,6 @@ ActiveRecord::Schema.define(version: 2020_01_28_104713) do
 
   add_foreign_key "favorites", "items"
   add_foreign_key "favorites", "users"
+  add_foreign_key "relationships", "users", column: "followed_id"
+  add_foreign_key "relationships", "users", column: "follower_id"
 end

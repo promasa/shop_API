@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_action :authorize!
-  before_action :set_user, only[:show, :update, :destroy]
-  before_action :check_auth_update, only[:update, :destroy]
+  before_action :set_user, only:[:show, :update, :destroy]
+  before_action :check_auth_update, only:[:update, :destroy]
   def index
     query = User.all
     query = query.page(params[:page]).per(params[:limit]).order(updated_at: :desc)
@@ -38,7 +38,7 @@ class UsersController < ApplicationController
   def set_user
     @user = User.find(params[:id])
   end
-  
+
   def check_auth_update
     if @user.user_id != current_user.id 
         raise ActionController::BadRequest and return

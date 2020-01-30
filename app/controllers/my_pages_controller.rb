@@ -11,4 +11,6 @@ class MyPagesController < ApplicationController
     serializer = ActiveModel::Serializer::CollectionSerializer.new(purchase,serializer:PurchaseSerializer)
     render json: serializer.as_json
   end
+
+  
 end
