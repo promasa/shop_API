@@ -1,14 +1,15 @@
 class ItemChatsController < ApplicationController
   before_action :authorize!
+  before_action :set_item, only:[:create, :index]
   before_action :set_text, only:[:show, :update, :destroy]
   before_action :check_auth_update, only:[:update, :destroy]
 
   def create
-    text = ItemChat.new(item_chat_params)
-    text.item_id = params[:item_id]
-    text.user_id = current_user.id
-    text.save
-    serializer = ItemChatSerializer.new(text)
+    chat = ItemChat.new(item_chat_params)
+    chat.item = @item
+    chat.user = current_user
+    chat.save
+    serializer = ItemChatSerializer.new(chat)
     render json: serializer.as_json
   end
 
@@ -29,8 +30,7 @@ class ItemChatsController < ApplicationController
   end
 
   def index
-    texts = ItemChat.all
-    texts = texts.where(item_id: params[:item_id])
+    texts = @item.item_chats
     serializer = ActiveModel::Serializer::CollectionSerializer.new(texts,serializer:ItemChatSerializer)
     render json: serializer.as_json
   end
@@ -42,7 +42,11 @@ class ItemChatsController < ApplicationController
   end
 
   def set_text
-      @text = ItemChat.find(params[:id])
+    @text = ItemChat.find_by(id: params[:id])
+  end
+
+  def set_item
+    @item = Item.find_by(id: params[:item_id])
   end
 
   def check_auth_update

@@ -1,0 +1,3 @@
+GET localhost:3000/my_followings HTTP/1.1
+content-type: application/json
+Authorization: pnEdeRk6ownWKZYfrs56a9kR

@@ -9,17 +9,15 @@ class ApplicationController < ActionController::API
   def current_user
     User.where(token: bearer_token).first
   end
-
-
-
-def error400(err)
-  render status: :bad_request, json: {
-      error: {
-          messages: [err.message],
-          status: 400
-      }
-  }
-end
+  
+  def error400(err)
+    render status: :bad_request, json: {
+        error: {
+            messages: [err.message],
+            status: 400
+        }
+    }
+  end
 
   private
   def bearer_token

@@ -2,10 +2,12 @@ class PurchasesController < ApplicationController
   before_action :authorize!
   before_action :set_item
   before_action :status_check, only:[:create]
-  before_action :check_auth_update, only:[:update]
+  before_action :check_auth_update, only:[:destroy]
+
   def create
-    purchase = Purchase.new(purchase_params)
-    purchase.user_id = current_user.id
+    purchase = Purchase.new
+    purchase .item = @item
+    purchase.user = current_user
     purchase.save
     @item.status = "true"
     @item.save
@@ -15,19 +17,12 @@ class PurchasesController < ApplicationController
 
   def destroy
     @item.update!(status:"false")
-    purchase = Purchase.find_by(item_id: params[:purchase_params][:item_id])
-    purchase.destroy!
+    @item.purchase.destroy!
     render json: {"message":"購入を取り消ししました"}
   end
 
-  def purchase_params
-    params.require(:purchase_params).permit(
-      :item_id
-    )
-  end
-
   def set_item
-    @item = Item.find_by(id: params[:purchase_params][:item_id])
+    @item = Item.find_by(id: params[:id])
   end
 
   def status_check
@@ -37,8 +32,8 @@ class PurchasesController < ApplicationController
   end
 
   def check_auth_update
-    purchase = Purchase.find_by(item_id: params[:purchase_params][:item_id])
-    if purchase.user_id != current_user.id 
+    purchase = @item.purchase
+    if purchase.user != current_user
         raise ActionController::BadRequest and return
     end
   end

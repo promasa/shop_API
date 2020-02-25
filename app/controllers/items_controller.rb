@@ -2,8 +2,9 @@ class ItemsController < ApplicationController
   before_action :authorize!
   before_action :set_item, only:[:update, :destroy, :show]
   before_action :check_auth_update, only:[:destroy, :update]
+  
   def index
-    query = Item.all
+    query = Item.all.includes(user: :items)
     query = query.page(params[:page]).per(params[:limit]).order(updated_at: :desc)
     if params[:query].present?
       query =query.where("name Like?" ,"%#{params[:query]}%")
@@ -14,7 +15,7 @@ class ItemsController < ApplicationController
 
   def create
     item = Item.new(item_params)
-    item.user_id = current_user.id
+    item.user = current_user
     item.save
     serializer = ItemSerializer.new(item)
     render json: serializer.as_json

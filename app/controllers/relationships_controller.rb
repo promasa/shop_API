@@ -16,17 +16,7 @@ class RelationshipsController < ApplicationController
     render json: {"messafe": "フォロー解除しました"}
   end
 
-  def followings
-    relationships = current_user.followings
-    serializer = ActiveModel::Serializer::CollectionSerializer.new(relationships,serializer:UserSerializer)
-    render json: serializer.as_json
-  end
 
-  def followers
-    relationships = current_user.followers
-    serializer = ActiveModel::Serializer::CollectionSerializer.new(relationships,serializer:UserSerializer)
-    render json: serializer.as_json
-  end
 
   def set_user
     @user = User.find_by(id: params[:id])
